@@ -44,7 +44,6 @@ class GeminiLLM {
 
       console.log("Parsed Words Array:", wordsArray);
 
-      // Return the raw JSON string without any cleaning
       return wordsArray;
     } catch (error) {
       console.error("Error generating words:", error.message);

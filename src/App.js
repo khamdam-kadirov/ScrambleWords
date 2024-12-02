@@ -33,8 +33,7 @@ function App() {
 
     try {
       const generatedWords = await startGame(theme);
-      const selectedWords = generatedWords;
-      const newWordsData = selectedWords.map((word) => {
+      const newWordsData = generatedWords.map((word) => {
         const letters = shuffleArray(word.toUpperCase().split(""));
         const userAnswer = Array(word.length).fill(null);
         return {

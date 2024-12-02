@@ -8,7 +8,8 @@ export async function startGame(theme) {
 
   try {
     const jsonResponse = await geminiLLM.generateWordsFromTheme(theme);
-    return jsonResponse.words;
+    console.log("The json response is: ", jsonResponse);
+    return jsonResponse;
   } catch (error) {
     console.error("Failed to start the game:", error);
     throw new Error("Game initialization failed. Could not generate words.");
