@@ -1,0 +1,15 @@
+/* src/components/Word.css */
+.word-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.letters {
+  margin-bottom: 20px;
+}
+
+.boxes {
+  display: flex;
+}

@@ -1,0 +1,24 @@
+/* WordRow.css */
+.word-row {
+  margin: 10px 0;
+}
+
+.word-row-content {
+  display: flex;
+  align-items: center;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+}
+
+.buttons button {
+  margin-bottom: 5px;
+}
+
+.result {
+  margin-left: 20px;
+  font-weight: bold;
+}

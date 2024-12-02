@@ -1,0 +1,11 @@
+/* src/components/Letter.css */
+.letter {
+  display: inline-block;
+  margin: 10px 5px;
+  padding: 10px 15px;
+  background-color: #3498db;
+  color: white;
+  font-size: 24px;
+  border-radius: 4px;
+  cursor: grab;
+}
