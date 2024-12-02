@@ -33,17 +33,26 @@ function App() {
 
     try {
       const generatedWords = await startGame(theme);
+
+      if (!Array.isArray(generatedWords)) {
+        throw new Error("Failed to generate words. Please try again.");
+      }
+
       const newWordsData = generatedWords.map((word) => {
-        const letters = shuffleArray(word.toUpperCase().split(""));
-        const userAnswer = Array(word.length).fill(null);
+        // Remove spaces from the word when generating letters
+        const cleanWord = word.toUpperCase().replace(/\s+/g, '');
+        const letters = shuffleArray(cleanWord.split(""));
+        const userAnswer = Array(cleanWord.length).fill(null);
         return {
-          word: word.toUpperCase(),
+          word: word.toUpperCase(), // Keep the original word (with spaces)
           letters,
           userAnswer,
           result: null,
         };
       });
+
       setWordsData(newWordsData);
+      console.log("Updated wordsData:", newWordsData);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -74,9 +83,11 @@ function App() {
         {error && <p style={{ color: "red" }}>{error}</p>}
 
         {/* Render the WordRow components */}
-        {wordsData.map((wordData, index) => (
-          <WordRow key={index} wordData={wordData} index={index} />
-        ))}
+        {wordsData.map((wordData) => (
+  <WordRow key={wordData.word} wordData={wordData} />
+))}
+
+
       </div>
 
       <footer>

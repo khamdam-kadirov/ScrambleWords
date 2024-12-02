@@ -1,35 +1,28 @@
 // Word.js
 import React from "react";
 import Letter from "./Letter";
-import Box from "./Box";
 import "./Word.css";
 
 function Word({ letters, setLetters, userAnswer, setUserAnswer, wordId }) {
-  const handleDrop = (item, index) => {
-    if (item.origin === "pool") {
-      // Remove letter from letters pool based on its value
-      const newLetters = [...letters];
-      const letterIndex = newLetters.findIndex((l) => l === item.letter);
-      if (letterIndex !== -1) {
-        newLetters.splice(letterIndex, 1);
-        setLetters(newLetters);
-      }
+  const handleLetterClick = (letter) => {
+    // Remove letter from letters pool
+    const newLetters = letters.filter((l) => l.id !== letter.id);
+    setLetters(newLetters);
 
-      // Add letter to userAnswer
-      const newUserAnswer = [...userAnswer];
-      newUserAnswer[index] = item.letter;
+    // Add letter to the next available spot in userAnswer
+    const newUserAnswer = [...userAnswer];
+    const emptyIndex = newUserAnswer.findIndex((l) => l === null);
+    if (emptyIndex !== -1) {
+      newUserAnswer[emptyIndex] = letter;
       setUserAnswer(newUserAnswer);
-    } else if (item.origin === "box") {
-      // Swap letters between boxes
-      const newUserAnswer = [...userAnswer];
-      const temp = newUserAnswer[index];
-      newUserAnswer[index] = item.letter;
-      newUserAnswer[item.index] = temp;
-      setUserAnswer(newUserAnswer);
+    } else {
+      // If no empty spots, put the letter back
+      setLetters([...newLetters, letter]);
+      alert("All boxes are filled. Click on a letter in the answer to remove it.");
     }
   };
 
-  const handleRemove = (index) => {
+  const handleAnswerLetterClick = (index) => {
     const letter = userAnswer[index];
     if (letter) {
       // Remove letter from userAnswer
@@ -37,7 +30,7 @@ function Word({ letters, setLetters, userAnswer, setUserAnswer, wordId }) {
       newUserAnswer[index] = null;
       setUserAnswer(newUserAnswer);
 
-      // Add letter back to letters
+      // Add letter back to letters pool
       setLetters([...letters, letter]);
     }
   };
@@ -45,26 +38,23 @@ function Word({ letters, setLetters, userAnswer, setUserAnswer, wordId }) {
   return (
     <div className="word-container">
       <div className="letters">
-        {letters.map((letter, idx) => (
+        {letters.map((letter) => (
           <Letter
-            key={idx}
+            key={letter.id}
             letter={letter}
-            wordId={wordId}
-            origin="pool"
-            index={idx}
+            onClick={() => handleLetterClick(letter)}
           />
         ))}
       </div>
       <div className="boxes">
         {userAnswer.map((letter, idx) => (
-          <Box
+          <div
             key={idx}
-            index={idx}
-            letter={letter}
-            onDrop={handleDrop}
-            onRemove={handleRemove}
-            wordId={wordId}
-          />
+            className="box"
+            onClick={() => handleAnswerLetterClick(idx)}
+          >
+            {letter && <Letter letter={letter} />}
+          </div>
         ))}
       </div>
     </div>

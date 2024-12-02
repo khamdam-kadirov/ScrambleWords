@@ -1,4 +1,3 @@
-// Box.js
 import React from "react";
 import { useDrop } from "react-dnd";
 import Letter from "./Letter";
@@ -23,7 +22,7 @@ function Box({ index, letter, onDrop, onRemove, wordId }) {
         canDrop: !!monitor.canDrop(),
       }),
     }),
-    [letter, wordId]
+    [letter, wordId, index]
   );
 
   const handleClick = () => {
@@ -43,9 +42,15 @@ function Box({ index, letter, onDrop, onRemove, wordId }) {
       ref={drop}
       className="box"
       style={{ backgroundColor }}
-      onClick={handleClick}>
+      onClick={handleClick}
+    >
       {letter && (
-        <Letter letter={letter} wordId={wordId} origin="box" index={index} />
+        <Letter
+          letter={letter}
+          wordId={wordId}
+          origin="box"
+          index={index}
+        />
       )}
     </div>
   );

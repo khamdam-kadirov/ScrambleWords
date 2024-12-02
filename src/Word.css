@@ -1,15 +1,51 @@
-/* src/components/Word.css */
+/* Word.css */
 .word-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
 }
 
 .letters {
-  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
 .boxes {
   display: flex;
+  justify-content: center;
+}
+
+.box {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #2e7d32; /* Dark green border */
+  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #a5d6a7; /* Light green background */
+}
+
+.letter {
+  width: 40px;
+  height: 40px;
+  background-color: #66bb6a; /* Medium green background */
+  color: #ffffff; /* White text color for contrast */
+  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.letter:hover {
+  background-color: #81c784; /* Lighter green on hover */
+}
+
+.box:hover {
+  background-color: #81c784; /* Lighter green on hover */
 }

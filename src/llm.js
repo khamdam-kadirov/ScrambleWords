@@ -16,7 +16,7 @@ class GeminiLLM {
 
   // Function to generate words from the Gemini API based on the theme
   async generateWordsFromTheme(theme) {
-    const prompt = `Provide a list of 10 words in JSON format based on this theme: "${theme}"`;
+    const prompt = `Provide a list of 10 single words in JSON format based on this theme: "${theme}"`;
 
     try {
       // Fetch the response from the model using the prompt

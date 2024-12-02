@@ -1,18 +1,36 @@
 // WordRow.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Word from "./Word";
 import "./WordRow.css";
 
-function WordRow({ wordData, index }) {
-  const [letters, setLetters] = useState(
-    wordData.letters.map((letter, idx) => ({ id: idx, letter }))
+function WordRow({ wordData }) {
+  const shuffleArray = (array) => {
+    return array
+      .map((value) => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
+  };
+
+  const createLetterObjects = (word) => {
+    return word.toUpperCase().split("").map((letter, idx) => ({
+      id: `${word}-${idx}`,
+      letter,
+    }));
+  };
+
+  const [letters, setLetters] = useState(() =>
+    shuffleArray(createLetterObjects(wordData.word.replace(/\s+/g, "")))
   );
-  const [userAnswer, setUserAnswer] = useState(wordData.userAnswer);
+  const [userAnswer, setUserAnswer] = useState(() =>
+    Array(wordData.word.replace(/\s+/g, "").length).fill(null)
+  );
   const [result, setResult] = useState(null);
 
   const handleCheck = () => {
-    const answer = userAnswer.join("");
-    if (answer.toUpperCase() === wordData.word.toUpperCase()) {
+    const answer = userAnswer.map((l) => (l ? l.letter : "")).join("");
+    const cleanWord = wordData.word.replace(/\s+/g, "").toUpperCase();
+
+    if (answer.toUpperCase() === cleanWord) {
       setResult("Correct!");
     } else {
       setResult("Incorrect. Try again!");
@@ -20,23 +38,10 @@ function WordRow({ wordData, index }) {
   };
 
   const handleReset = () => {
-    const newLetters = shuffleArray(
-      wordData.word
-        .toUpperCase()
-        .split("")
-        .map((letter, idx) => ({ id: idx, letter }))
-    );
-    setLetters(newLetters);
-    setUserAnswer(Array(wordData.word.length).fill(null));
+    setLetters(shuffleArray(createLetterObjects(wordData.word.replace(/\s+/g, ""))));
+    setUserAnswer(Array(wordData.word.replace(/\s+/g, "").length).fill(null));
     setResult(null);
   };
-
-  function shuffleArray(array) {
-    return array
-      .map((value) => ({ ...value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ id, letter }) => ({ id, letter }));
-  }
 
   return (
     <div className="word-row">
@@ -46,7 +51,7 @@ function WordRow({ wordData, index }) {
           setLetters={setLetters}
           userAnswer={userAnswer}
           setUserAnswer={setUserAnswer}
-          wordId={index}
+          wordId={wordData.word}
         />
         <div className="buttons">
           <button onClick={handleCheck}>Check Answer</button>
