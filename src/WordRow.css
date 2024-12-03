@@ -113,7 +113,7 @@
 }
 
 .message.success {
-  color: #2ecc71; /* Green color for success */
+  color: #1c2327; /* Green color for success */
 }
 
 .message.error {
@@ -124,5 +124,5 @@
   text-align: center;
   margin-top: 10px;
   font-size: 0.95rem;
-  color: #bdc3c7;
+  color: #1c2327;
 }
