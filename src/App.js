@@ -93,7 +93,7 @@ function App() {
       <footer>
         <p>
           &copy; 2024 Scramble Games. CSC372 Final Project. <br />
-          <a href="https://github.com/nurkhat18/CS372/tree/main/noname">
+          <a href="https://github.com/khamdam-kadirov/ScrambleWords">
             Github Repo
           </a>
         </p>
