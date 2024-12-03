@@ -1,64 +1,118 @@
-// WordRow.js
-import React, { useState, useEffect } from "react";
-import Word from "./Word";
-import "./WordRow.css";
+// src/WordRow.js
+import React, { useState } from "react";
+import "./WordRow.css"; // Ensure this CSS file exists and is correctly imported
 
-function WordRow({ wordData }) {
-  const shuffleArray = (array) => {
-    return array
-      .map((value) => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
+function WordRow({ wordData, wordId, onComplete }) {
+  const [userAnswer, setUserAnswer] = useState([]);
+  const [errors, setErrors] = useState(0);
+  const [isSolved, setIsSolved] = useState(false);
+  const [message, setMessage] = useState("");
+
+  // Initialize letters with unique IDs to handle duplicate letters
+  const lettersWithId = wordData.letters.map((letter, index) => ({
+    letter,
+    id: index,
+  }));
+
+  const [availableLetters, setAvailableLetters] = useState(lettersWithId);
+
+  // Handle clicking on an available letter
+  const handleLetterClick = (letterObj) => {
+    if (isSolved || userAnswer.length >= wordData.word.length) return;
+
+    setUserAnswer([...userAnswer, letterObj]);
+    setAvailableLetters(
+      availableLetters.filter((letter) => letter.id !== letterObj.id)
+    );
   };
 
-  const createLetterObjects = (word) => {
-    return word.toUpperCase().split("").map((letter, idx) => ({
-      id: `${word}-${idx}`,
-      letter,
-    }));
+  // Handle clicking on a letter in the user answer to remove it
+  const handleAnswerClick = (index) => {
+    if (isSolved) return;
+
+    const letterToRemove = userAnswer[index];
+    const newUserAnswer = userAnswer.filter((_, i) => i !== index);
+    setUserAnswer(newUserAnswer);
+    setAvailableLetters([...availableLetters, letterToRemove]);
   };
 
-  const [letters, setLetters] = useState(() =>
-    shuffleArray(createLetterObjects(wordData.word.replace(/\s+/g, "")))
-  );
-  const [userAnswer, setUserAnswer] = useState(() =>
-    Array(wordData.word.replace(/\s+/g, "").length).fill(null)
-  );
-  const [result, setResult] = useState(null);
-
-  const handleCheck = () => {
-    const answer = userAnswer.map((l) => (l ? l.letter : "")).join("");
-    const cleanWord = wordData.word.replace(/\s+/g, "").toUpperCase();
-
-    if (answer.toUpperCase() === cleanWord) {
-      setResult("Correct!");
+  // Handle checking the answer
+  const checkAnswer = () => {
+    const assembledWord = userAnswer.map((obj) => obj.letter).join("").toUpperCase();
+    if (assembledWord === wordData.word) {
+      setIsSolved(true);
+      setMessage("✅ Correct!");
+      onComplete(wordId, errors);
     } else {
-      setResult("Incorrect. Try again!");
+      setErrors(errors + 1);
+      setMessage("❌ Incorrect, try again!");
     }
   };
 
-  const handleReset = () => {
-    setLetters(shuffleArray(createLetterObjects(wordData.word.replace(/\s+/g, ""))));
-    setUserAnswer(Array(wordData.word.replace(/\s+/g, "").length).fill(null));
-    setResult(null);
+  // Handle starting over for this word
+  const startOver = () => {
+    setUserAnswer([]);
+    setErrors(0);
+    setIsSolved(false);
+    setMessage("");
+    setAvailableLetters(lettersWithId);
   };
 
   return (
-    <div className="word-row">
-      <div className="word-row-content">
-        <Word
-          letters={letters}
-          setLetters={setLetters}
-          userAnswer={userAnswer}
-          setUserAnswer={setUserAnswer}
-          wordId={wordData.word}
-        />
-        <div className="buttons">
-          <button onClick={handleCheck}>Check Answer</button>
-          <button onClick={handleReset}>Reset</button>
-        </div>
-        {result && <p className="result">{result}</p>}
+    <div className={`word-row ${isSolved ? "solved" : ""}`}>
+      <div className="word-title">
+        {/* Optionally display the word's hint or category */}
+        {/* <span>{wordData.hint}</span> */}
       </div>
+      <div className="available-letters">
+        {availableLetters.map((letterObj) => (
+          <button
+            key={letterObj.id}
+            className="letter-button"
+            onClick={() => handleLetterClick(letterObj)}
+            disabled={isSolved || userAnswer.length >= wordData.word.length}
+          >
+            {letterObj.letter}
+          </button>
+        ))}
+      </div>
+      <div className="user-answer">
+        {Array.from({ length: wordData.word.length }).map((_, index) => (
+          <div
+            key={index}
+            className={`answer-box ${userAnswer[index] ? "filled" : ""}`}
+            onClick={() => handleAnswerClick(index)}
+          >
+            {userAnswer[index] ? userAnswer[index].letter : ""}
+          </div>
+        ))}
+      </div>
+      <div className="controls">
+        {!isSolved && (
+          <button
+            onClick={checkAnswer}
+            disabled={userAnswer.length !== wordData.word.length}
+            className="check-button"
+          >
+            Check Answer
+          </button>
+        )}
+        {isSolved && (
+          <button onClick={startOver} className="start-over-button">
+            Start Over
+          </button>
+        )}
+      </div>
+      {message && (
+        <p className={`message ${isSolved ? "success" : "error"}`}>
+          {message}
+        </p>
+      )}
+      {isSolved && (
+        <div className="correct-answer">
+          <strong>Correct Answer:</strong> {wordData.word}
+        </div>
+      )}
     </div>
   );
 }

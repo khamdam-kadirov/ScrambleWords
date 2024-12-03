@@ -1,8 +1,10 @@
-// App.js
-import React, { useState } from "react";
+// src/App.js
+import React, { useState, useEffect } from "react";
 import WordRow from "./WordRow";
 import "./App.css";
-import { startGame } from "./gameLogic";
+import { startGame, findBonusWords } from "./gameLogic";
+import MatrixBackground from "./components/MatrixBackground"; // Importing the Matrix background
+import Popup from "./components/Popup"; // Importing the Popup component
 
 function shuffleArray(array) {
   return array
@@ -16,6 +18,9 @@ function App() {
   const [wordsData, setWordsData] = useState([]); // Store the data for each word
   const [loading, setLoading] = useState(false); // Loading state indicator
   const [error, setError] = useState(null); // Error handler
+  const [showPopup, setShowPopup] = useState(false); // Popup visibility
+  const [totalErrors, setTotalErrors] = useState(0); // Total number of errors
+  const [bonusWords, setBonusWords] = useState([]); // List of bonus words
 
   const handleThemeChange = (event) => {
     setTheme(event.target.value); // Update theme as user types
@@ -30,6 +35,9 @@ function App() {
 
     setLoading(true);
     setError(null);
+    setShowPopup(false);
+    setTotalErrors(0);
+    setBonusWords([]);
 
     try {
       const generatedWords = await startGame(theme);
@@ -47,7 +55,8 @@ function App() {
           word: word.toUpperCase(), // Keep the original word (with spaces)
           letters,
           userAnswer,
-          result: null,
+          result: false, // Initially not solved
+          errors: 0, // Track errors for each word
         };
       });
 
@@ -60,44 +69,99 @@ function App() {
     }
   };
 
+  // Function to handle word completion
+  const handleWordComplete = (wordId, errors) => {
+    setWordsData((prevWordsData) =>
+      prevWordsData.map((wordData, index) =>
+        index === wordId
+          ? { ...wordData, result: true, errors: wordData.errors + errors }
+          : wordData
+      )
+    );
+    setTotalErrors((prevErrors) => prevErrors + errors);
+    console.log(`Word ${wordId} completed with ${errors} errors.`);
+  };
+
+  // Check if all words are completed
+  useEffect(() => {
+    if (wordsData.length > 0 && wordsData.every((word) => word.result)) {
+      // Find bonus words
+      const allSolvedWords = wordsData.map((word) => word.word);
+      const bonuses = findBonusWords(allSolvedWords);
+      setBonusWords(bonuses);
+      setShowPopup(true);
+    }
+  }, [wordsData]);
+
+  // Function to start over the game
+  const handleStartOver = () => {
+    setTheme("");
+    setWordsData([]);
+    setShowPopup(false);
+    setTotalErrors(0);
+    setBonusWords([]);
+  };
+
   return (
     <div className="App">
-      <header>
-        <h1>Word Scramble Game</h1>
-      </header>
+      {/* Matrix Background */}
+      <MatrixBackground />
 
-      <div className="container">
-        <p>Enter a theme to generate words:</p>
-        <div className="searchbox-container">
-          <input
-            type="text"
-            value={theme}
-            onChange={handleThemeChange}
-            placeholder="Enter a theme (e.g., Animals, Food)"
-          />
-          <button onClick={handleSubmit}>
-            {loading ? "Loading..." : "Generate Words"}
-          </button>
-        </div>
+      {/* Main Content Wrapper */}
+      <div className="content-wrapper">
+        <header>
+          <h1>Word Scramble Game</h1>
+        </header>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        <main className="container">
+          <p className="green-bold-text">Enter a theme to generate words:</p>
+          <div className="searchbox-container">
+            <input
+              type="text"
+              value={theme}
+              onChange={handleThemeChange}
+              placeholder="Enter a theme (e.g., Animals, Food)"
+            />
+            <button onClick={handleSubmit} disabled={loading}>
+              {loading ? "Loading..." : "Generate Words"}
+            </button>
+          </div>
 
-        {/* Render the WordRow components */}
-        {wordsData.map((wordData) => (
-  <WordRow key={wordData.word} wordData={wordData} />
-))}
+          {error && <p className="error">{error}</p>}
 
+          {/* Render the WordRow components */}
+          {wordsData.map((wordData, index) => (
+            <WordRow
+              key={index}
+              wordData={wordData}
+              wordId={index}
+              onComplete={handleWordComplete}
+            />
+          ))}
+        </main>
 
+        <footer>
+          <p>
+            &copy; 2024 Scramble Games. CSC372 Final Project. <br />
+            <a
+              href="https://github.com/khamdam-kadirov/ScrambleWords"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Github Repo
+            </a>
+          </p>
+        </footer>
       </div>
 
-      <footer>
-        <p>
-          &copy; 2024 Scramble Games. CSC372 Final Project. <br />
-          <a href="https://github.com/khamdam-kadirov/ScrambleWords">
-            Github Repo
-          </a>
-        </p>
-      </footer>
+      {/* Popup for Win Condition */}
+      {showPopup && (
+        <Popup
+          totalErrors={totalErrors}
+          bonusWords={bonusWords}
+          onStartOver={handleStartOver}
+        />
+      )}
     </div>
   );
 }

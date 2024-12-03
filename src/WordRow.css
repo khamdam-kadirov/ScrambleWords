@@ -1,24 +1,128 @@
-/* WordRow.css */
+/* src/WordRow.css */
+
 .word-row {
-  margin: 10px 0;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: rgba(76, 175, 80, 0.8); /* Green background with transparency */
+  border-radius: 10px;
+  color: #ffffff; /* White text for contrast */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
 }
 
-.word-row-content {
+.word-row.solved {
+  background-color: rgba(46, 204, 113, 0.9); /* Lighter green when solved */
+}
+
+.word-title {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  /* Optional: Add hint or category styling */
+  /* color: #ecf0f1; */
+}
+
+.available-letters {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 15px;
 }
 
-.buttons {
+.letter-button {
+  padding: 10px 15px;
+  margin: 5px;
+  font-size: 1.2rem;
+  background-color: #4caf50; /* Original green color */
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.letter-button:hover:not(:disabled) {
+  background-color: #43a047; /* Darker green on hover */
+  transform: translateY(-2px);
+}
+
+.letter-button:disabled {
+  background-color: #a5d6a7; /* Lighter green when disabled */
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.user-answer {
   display: flex;
-  flex-direction: column;
-  margin-left: 20px;
+  justify-content: center;
+  margin-bottom: 15px;
 }
 
-.buttons button {
-  margin-bottom: 5px;
+.answer-box {
+  width: 50px;
+  height: 60px;
+  border: 2px solid #ffffff;
+  border-radius: 5px;
+  margin: 0 5px;
+  line-height: 60px;
+  font-size: 1.5rem;
+  text-align: center;
+  background-color: #ffffff;
+  color: #000000;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.result {
-  margin-left: 20px;
-  font-weight: bold;
+.answer-box.filled {
+  background-color: #ffffff;
+  color: #4caf50; /* Green text when filled */
+}
+
+.controls {
+  text-align: center;
+}
+
+.check-button,
+.start-over-button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 1rem;
+  background-color: #ffffff; /* White background for buttons */
+  color: #4caf50; /* Green text */
+  border: 2px solid #4caf50;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.check-button:hover:not(:disabled),
+.start-over-button:hover {
+  background-color: #4caf50;
+  color: #ffffff;
+}
+
+.check-button:disabled {
+  background-color: #a5d6a7; /* Light green when disabled */
+  border-color: #a5d6a7;
+  cursor: not-allowed;
+}
+
+.message {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.message.success {
+  color: #2ecc71; /* Green color for success */
+}
+
+.message.error {
+  color: #e74c3c; /* Red color for errors */
+}
+
+.correct-answer {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #bdc3c7;
 }
