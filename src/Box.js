@@ -1,3 +1,4 @@
+// src/components/Box.js
 import React from "react";
 import { useDrop } from "react-dnd";
 import Letter from "./Letter";
